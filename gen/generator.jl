@@ -1,10 +1,15 @@
 using Clang.Generators
 
-# using ImPlot.LibCImPlot.CImPlot_jll
+# using ImPlot.ImPlot_CImPlot_jll
 
-using CImGui.CImGui_jll
+# using CImGui.CImGui_jll
 
-include_dir = joinpath(CImGui_jll.artifact_dir, "include")
+# using CImPlot_jll
+using CImGuiPack_jll
+
+include_dir = joinpath(CImGuiPack_jll.artifact_dir, "include")
+const libcimplot = joinpath(CImGuiPack_jll.artifact_dir, "bin", "libcimgui.dll")
+
 
 cd(@__DIR__)
 
@@ -52,7 +57,7 @@ function revise_function!(e::Expr)
     fname = string(e.args[1].args[1])
 
     # Skip if it's not a prefix added by cimplot
-    startswith(fname,"ImPlot_") || return e
+    startswith(fname,"ImPlot_") ) || return e
 
     # Strip off the prefix to match C++ (since we have a namespace)
     fname = fname[8:end] # remove first 7 characters == 'ImPlot_'
@@ -119,3 +124,6 @@ end
 
 rewrite!(ctx.dag)
 build!(ctx, BUILDSTAGE_PRINTING_ONLY)
+
+
+cd("..")

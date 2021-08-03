@@ -63,7 +63,7 @@ try
         CImGui.NewFrame()
 
         # show the big demo window
-        show_demo_window && @c ImPlot.LibCImPlot.ShowDemoWindow(&show_demo_window)
+        show_demo_window && @c ImPlot.ImPlot_ShowDemoWindow(&show_demo_window)
         
         # show a simple window that we create ourselves.
         # we use a Begin/End pair to created a named window.

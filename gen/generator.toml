@@ -5,7 +5,7 @@
 library_name = "libcimplot"
 
 # the new generator is able to print everthing into one single file instead of a pair of two files.
-output_file_path = "../src/libcimplot.jl"
+output_file_path = "../src/ImPlot_jl"
 
 # if this entry is not empty, the generator will print the code below to the `output_file_path`.
 # module module_name

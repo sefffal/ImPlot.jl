@@ -3,25 +3,25 @@
 function PlotScatter(label_id, values::Union{AbstractArray{T},Ptr{T},Ref{T}}, count::Integer,
                      xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0,
                      stride::Integer = sizeof(T)) where {T<:ImPlotData}
-    LibCImPlot.PlotScatter(label_id, values, count, xscale, x0, offset, stride)
+    ImPlot_PlotScatter(label_id, values, count, xscale, x0, offset, stride)
 end
 
 function PlotScatter(label_id, values::Union{AbstractArray{T},Ptr{T},Ref{T}}, count::Integer,
                      xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0,
                      stride::Integer = sizeof(Float64)) where {T<:Real}
-    LibCImPlot.PlotScatter(label_id, Float64.(values), count, xscale, x0, offset, stride)
+    ImPlot_PlotScatter(label_id, Float64.(values), count, xscale, x0, offset, stride)
 end
 
 function PlotScatter(label_id, x::Union{AbstractArray{T},Ptr{T},Ref{T}},
                      y::Union{AbstractArray{T},Ptr{T},Ref{T}}, count::Integer,
                      offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
-    LibCImPlot.PlotScatter(label_id, x, y, count, offset, stride)
+    ImPlot_PlotScatter(label_id, x, y, count, offset, stride)
 end
 
 function PlotScatter(label_id, x::Union{AbstractArray{T},Ptr{T},Ref{T}},
                      y::Union{AbstractArray{T},Ptr{T},Ref{T}}, count::Integer,
                      offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
-    LibCImPlot.PlotScatter(label_id, Float64.(x), Float64.(y), count, offset, stride)
+    ImPlot_PlotScatter(label_id, Float64.(x), Float64.(y), count, offset, stride)
 end
 
 function PlotScatter(x::AbstractArray{T}, y::AbstractArray{T};
@@ -29,7 +29,7 @@ function PlotScatter(x::AbstractArray{T}, y::AbstractArray{T};
                   offset::Integer = 0, stride::Integer = 1,
                   label_id::String = "") where {T<:ImPlotData}
     
-    LibCImPlot.PlotScatter(label_id, x, y, count, offset, stride * sizeof(T))
+    ImPlot_PlotScatter(label_id, x, y, count, offset, stride * sizeof(T))
 end
 
 function PlotScatter(x::AbstractArray{T1}, y::AbstractArray{T2}; kwargs...) where {T1<:Real,T2<:Real}
@@ -39,7 +39,7 @@ end
 function PlotScatter(y::AbstractArray{T}; label_id::String="", count::Integer=length(y),
                   xscale::Real = 1.0, x0::Real = 0,
                   offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
-    LibCImPlot.PlotScatter(label_id, y, count, xscale, x0, offset, stride * sizeof(T))
+    ImPlot_PlotScatter(label_id, y, count, xscale, x0, offset, stride * sizeof(T))
 end
 
 function PlotScatter(x::UnitRange{<:Integer}, y::AbstractArray{T};
@@ -49,7 +49,7 @@ function PlotScatter(x::UnitRange{<:Integer}, y::AbstractArray{T};
     count::Cint = length(x)
     offset::Cint = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
     stride = Cint(sizeof(T))
-    LibCImPlot.PlotScatter(label_id, y, count, xscale, x0, offset, stride)
+    ImPlot_PlotScatter(label_id, y, count, xscale, x0, offset, stride)
 end
 
 function PlotScatter(x::StepRange, y::AbstractArray{T};
@@ -60,7 +60,7 @@ function PlotScatter(x::StepRange, y::AbstractArray{T};
     count::Cint = length(x)
     offset::Cint = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
     stride = Cint(x.step * sizeof(T))
-    LibCImPlot.PlotScatter(label_id, y, count, xscale, x0, offset, stride)
+    ImPlot_PlotScatter(label_id, y, count, xscale, x0, offset, stride)
 end
 
 # xfield, yfield should be propertynames of eltype(structvec)
@@ -96,8 +96,8 @@ function PlotScatter(
         stride = stride * sizeof(eltype(x))
     end
 
-    LibCImPlot.PlotScatter(label_id, x, y, count, offset, stride)
+    ImPlot_PlotScatter(label_id, x, y, count, offset, stride)
 end
 
 PlotScatterG(label_id, getter, data, count, offset=0) =
-LibCImPlot.PlotScatterG(label_id, getter, data, count, offset)
+ImPlot_PlotScatterG(label_id, getter, data, count, offset)

@@ -50,7 +50,7 @@ function init_renderer(width, height, title::AbstractString)
     # CImGui.StyleColorsClassic()
     # CImGui.StyleColorsLight()
     #s = ImPlot.GetStyle()
-    #@c ImPlot.LibCImPlot.StyleColorsDark(&s) # does this even work ?
+    #@c ImPlot.ImPlot_StyleColorsDark(&s) # does this even work ?
 
     # setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true)

@@ -1,34 +1,34 @@
 # Shaded line plots
 
 function PlotShaded(label_id, values::AbstractArray{T}, count::Integer, y_ref::Real = 0., xscale::Real = 1., x0::Real = 0., offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
-    LibCImPlot.PlotShaded(label_id, values, count, y_ref, xscale, x0, offset, stride)
+    ImPlot_PlotShaded(label_id, values, count, y_ref, xscale, x0, offset, stride)
 end
 
 function PlotShaded(label_id, x::AbstractArray{T}, y::AbstractArray{T}, count::Integer, y_ref::Real = 0., offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
-    LibCImPlot.PlotShaded(label_id, x, y, count, y_ref, offset, stride)
+    ImPlot_PlotShaded(label_id, x, y, count, y_ref, offset, stride)
 end
 
 function PlotShaded(label_id, x::AbstractArray{T}, y1::AbstractArray{T}, y2::AbstractArray{T}, count::Integer, offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
-    LibCImPlot.PlotShaded(label_id, x, y1, y2, count, offset, stride)
+    ImPlot_PlotShaded(label_id, x, y1, y2, count, offset, stride)
 end
 
 function PlotShaded(label_id, values::AbstractArray{T}, count::Integer, y_ref::Real = 0., xscale::Real = 1., x0::Real = 0., offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
-    LibCImPlot.PlotShaded(label_id, Float64.(values), count, y_ref, xscale, x0, offset, stride)
+    ImPlot_PlotShaded(label_id, Float64.(values), count, y_ref, xscale, x0, offset, stride)
 end
 
 function PlotShaded(label_id, x::AbstractArray{T}, y::AbstractArray{T}, count::Integer, y_ref::Real = 0., offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
-    LibCImPlot.PlotShaded(label_id, Float64.(x), Float64.(y), count, y_ref, offset, stride)
+    ImPlot_PlotShaded(label_id, Float64.(x), Float64.(y), count, y_ref, offset, stride)
 end
 
 function PlotShaded(label_id, x::AbstractArray{T}, y1::AbstractArray{T}, y2::AbstractArray{T}, count::Integer, offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
-    LibCImPlot.PlotShaded(label_id, Float64.(x), Float64.(y1), Float64.(y2), count, offset, stride)
+    ImPlot_PlotShaded(label_id, Float64.(x), Float64.(y1), Float64.(y2), count, offset, stride)
 end
 
 function PlotShaded(x::AbstractArray{T,1}, y1::AbstractArray{T,1}, y2::AbstractArray{T,1};
                                label_id::String = "", count::Integer = min(length(x), length(y2),
                                length(y2)), offset::Integer = 0, stride::Integer = 1) where {T <: ImPlotData}
 
-    LibCImPlot.PlotShaded(label_id, x, y1, y2, count, offset, stride * sizeof(T))
+    ImPlot_PlotShaded(label_id, x, y1, y2, count, offset, stride * sizeof(T))
 end
 
 function PlotShaded(x::AbstractArray{T1}, y1::AbstractArray{T2}, y2::AbstractArray{T3};
@@ -40,7 +40,7 @@ function PlotShaded(x::AbstractArray{T}, y::AbstractArray{T}, y_ref::T;
                     count::Integer = min(length(x),length(y)), offset::Integer = 0,
                     stride::Integer = 1, label_id::String = "") where {T <: ImPlotData}
 
-    LibCImPlot.PlotShaded(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
+    ImPlot_PlotShaded(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
 end
 
 function PlotShaded(x::AbstractArray{T1}, y::AbstractArray{T2}, y_ref::T3;
@@ -54,14 +54,14 @@ function PlotShaded(x::UnitRange{<:Integer}, y1::AbstractArray{T}, y2::AbstractA
     count = length(x)
     offset = x.start >= 1 ? x.start - 1 : throw("Offset out of bounds")
     x = collect(T, x)
-    LibCImPlot.PlotShaded(label_id, x, y1, y2, count, offset, sizeof(T))
+    ImPlot_PlotShaded(label_id, x, y1, y2, count, offset, sizeof(T))
 end
 
 function PlotShaded(x::UnitRange{<:Integer}, y::AbstractArray{T}, y_ref::T; label_id::String="") where {T <: ImPlotData}
     count = length(x)
     offset = x.start >= 1 ? x.start - 1 : throw("Offset out of bounds")
     x = collect(T, x)
-    LibCImPlot.PlotShaded(label_id, x, y, count, y_ref, offset, sizeof(T))
+    ImPlot_PlotShaded(label_id, x, y, count, y_ref, offset, sizeof(T))
 end
 
 function PlotShaded(x::StepRange, y1::AbstractArray{T}, y2::AbstractArray{T}; label_id::String="") where {T <: ImPlotData}
@@ -70,7 +70,7 @@ function PlotShaded(x::StepRange, y1::AbstractArray{T}, y2::AbstractArray{T}; la
     offset = x.start >= 1 ? x.start -1 : throw("Range out of bounds")
     stride = x.step >= 1 ? x.step : throw("Stride must be greater than zero.")
     x = collect(T, x)
-    LibCImPlot.PlotShaded(label_id, x, y1, y2, count, offset, stride * sizeof(T))
+    ImPlot_PlotShaded(label_id, x, y1, y2, count, offset, stride * sizeof(T))
 end
 
 function PlotShaded(x::StepRange, y::AbstractArray{T}, y_ref::T; label_id::String = "") where {T <: ImPlotData}
@@ -80,7 +80,7 @@ function PlotShaded(x::StepRange, y::AbstractArray{T}, y_ref::T; label_id::Strin
     stride = x.step >= 1 ? x.step : throw("Stride must be greater than zero.")
 
     x = collect(T, x)
-    LibCImPlot.PlotShaded(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
+    ImPlot_PlotShaded(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
 end
 
 function PlotShaded(x::OrdinalRange, y1::AbstractArray{T1}, y2::AbstractArray{T2};
@@ -126,8 +126,8 @@ function PlotShaded(
         stride = stride * sizeof(eltype(x))
     end
 
-    LibCImPlot.PlotShaded(label_id, x, y, count, y_ref, offset, stride)
+    ImPlot_PlotShaded(label_id, x, y, count, y_ref, offset, stride)
 end
 
 PlotShadedG(label_id, getter1, data1, getter2, data2, count, offset=0) =
-LibCImPlot.PlotShadedG(label_id, getter1, data1, getter2, data2, count, offset)
+ImPlot_PlotShadedG(label_id, getter1, data1, getter2, data2, count, offset)

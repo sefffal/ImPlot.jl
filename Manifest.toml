@@ -15,30 +15,42 @@ uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
 version = "0.4.1"
 
 [[CImGui]]
-deps = ["CImGui_jll", "CSyntax", "GLFW", "Libdl", "ModernGL"]
-git-tree-sha1 = "07736bde1ad9ddd3d8177de19c4cb1cafd658ff9"
-pinned = true
+deps = ["CEnum", "CSyntax", "ImGuiGLFWBackend", "ImGuiOpenGLBackend", "LibCImGui"]
+git-tree-sha1 = "5b2c2d4b5ca74249a8b27ba5b5a1034d84ec218a"
+repo-rev = "master"
+repo-url = "https://github.com/Gnimuc/CImGui.jl.git"
 uuid = "5d785b6c-b76f-510e-a07c-3070796c7e87"
-version = "1.79.0"
+version = "1.82.0"
 
-[[CImGui_jll]]
+[[CImGuiPack_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "880a144921b99bf92b39bbf99817706391bf2448"
-uuid = "7dd61d3b-0da5-5c94-bbf9-a0296c6e3925"
-version = "1.79.0+0"
-
-[[CImPlot_jll]]
-deps = ["Artifacts", "CImGui_jll", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "d44c3cae515d663cb7a63ab4f8a31e8073186f7c"
-pinned = true
-uuid = "278f1f02-c5a0-563f-9174-e8b244dda450"
-version = "0.8.0+0"
+git-tree-sha1 = "70939649c5032c166ce2a1fe39a3a177b29a7907"
+uuid = "333409e9-af72-5310-9767-d6ad21a76a05"
+version = "0.1.2+0"
 
 [[CSyntax]]
 deps = ["CEnum"]
 git-tree-sha1 = "50a830730a04cd9ab8468a60b93ac2ca9d34ba17"
 uuid = "ea656a56-6ca6-5dda-bba5-7b6963a5f74c"
 version = "0.4.0"
+
+[[Clang]]
+deps = ["CEnum", "Clang_jll", "Downloads", "Pkg", "TOML"]
+git-tree-sha1 = "59687b776ff47eebbab8422186b7eb670caf447f"
+repo-rev = "julia-1.7"
+repo-url = "https://github.com/JuliaInterop/Clang.jl.git"
+uuid = "40e3b903-d033-50b4-a0cc-940c62c95e31"
+version = "0.14.0"
+
+[[Clang_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "libLLVM_jll"]
+git-tree-sha1 = "39e54fee89caf38de9196d8919475aa2ff65309d"
+uuid = "0ee61d77-7f21-5576-8119-9fcc46b10100"
+version = "12.0.0+1"
+
+[[CompilerSupportLibraries_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 
 [[ConstructionBase]]
 deps = ["LinearAlgebra"]
@@ -58,17 +70,23 @@ uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
-[[GLFW]]
-deps = ["GLFW_jll"]
-git-tree-sha1 = "35dbc482f0967d8dceaa7ce007d16f9064072166"
-uuid = "f7f18e0c-5ee9-5ccd-a5bf-e8befd85ed98"
-version = "3.4.1"
-
 [[GLFW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Pkg", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll"]
 git-tree-sha1 = "a199aefead29c3c2638c3571a9993b564109d45a"
 uuid = "0656b61e-2033-5cc2-a64a-77c0f6c09b89"
 version = "3.3.4+0"
+
+[[ImGuiGLFWBackend]]
+deps = ["GLFW_jll", "LibCImGui", "Libdl"]
+git-tree-sha1 = "6c8a647c121f4a1204e2b84278e4a5dcd11ff6ba"
+uuid = "623d79b3-9695-4e60-bd7e-2a5aabaa6933"
+version = "0.1.2"
+
+[[ImGuiOpenGLBackend]]
+deps = ["LibCImGui", "ModernGL"]
+git-tree-sha1 = "7f7305c526f3749bb3cc4c953bf1bf83617b49f5"
+uuid = "9d0819b4-44e7-43a2-ad03-8fb999128168"
+version = "0.1.0"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
@@ -79,6 +97,12 @@ deps = ["Preferences"]
 git-tree-sha1 = "642a199af8b68253517b80bd3bfd17eb4e84df6e"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
 version = "1.3.0"
+
+[[LibCImGui]]
+deps = ["CEnum", "CImGuiPack_jll"]
+path = "../LibCImGui"
+uuid = "9be01004-c4f5-478b-abeb-cb32b114cf5e"
+version = "1.82.2"
 
 [[LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -119,12 +143,12 @@ version = "1.42.0+0"
 
 [[Libiconv_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "8d22e127ea9a0917bc98ebd3755c8bd31989381e"
+git-tree-sha1 = "42b62845d70a619f063a7da093d995ec8e15e778"
 uuid = "94ce4f54-9a6c-5748-9c1c-f9c7231a4531"
-version = "1.16.1+0"
+version = "1.16.1+1"
 
 [[LinearAlgebra]]
-deps = ["Libdl"]
+deps = ["Libdl", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[Logging]]
@@ -155,6 +179,10 @@ uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
+
+[[OpenBLAS_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
+uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
 
 [[Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -307,6 +335,14 @@ version = "1.4.0+3"
 [[Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
+
+[[libLLVM_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "8f36deef-c2a5-5394-99ed-8e07531fb29a"
+
+[[libblastrampoline_jll]]
+deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
+uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
 
 [[nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
