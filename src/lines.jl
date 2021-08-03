@@ -1,18 +1,18 @@
 # Line plots
 
-function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, y::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer, offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
+function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, y::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
     ImPlot_PlotLine(label_id, x, y, count, offset, stride)
 end
 
-function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, y::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer, offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
+function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, y::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
     ImPlot_PlotLine(label_id, Float64.(x), Float64.(y), count, offset, stride)
 end
 
-function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer, xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
+function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
     ImPlot_PlotLine(label_id, x, count, xscale, x0, offset, stride)
 end
 
-function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer, xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
+function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
     ImPlot_PlotLine(label_id, Float64.(x), count, xscale, x0, offset, stride)
 end
 
@@ -91,3 +91,49 @@ end
 
 PlotLineG(label_id, getter, data, count, offset = 0) =
 ImPlot_PlotLineG(label_id, getter, data, count, offset)
+
+
+AA = AbstractArray
+line_functions = [
+    (AA{<:Cfloat}, AA{<:Cfloat}) => ImPlot_PlotLine_FloatPtrFloatPtr
+    (AA{<:Cdouble}, AA{<:Cdouble}) => ImPlot_PlotLine_doublePtrdoublePtr
+    (AA{<:Int32}, AA{<:Int32}) => ImPlot_PlotLine_S32PtrS32Ptr
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_U16PtrInt
+    (AA{<:UInt64}, AA{<:UInt64}) => ImPlot_PlotLine_U64PtrU64Ptr
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_FloatPtrInt
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_S64PtrInt
+    (AA{<:UInt16}, AA{<:UInt16}) => ImPlot_PlotLine_U16PtrU16Ptr
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_U8PtrInt
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_S16PtrInt
+    (AA{<:Int64}, AA{<:Int64}) => ImPlot_PlotLine_S64PtrS64Ptr
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_U32PtrInt
+    (AA{<:UInt8}, AA{<:UInt8}) => ImPlot_PlotLine_U8PtrU8Ptr
+    (AA{<:Int16}, AA{<:Int16}) => ImPlot_PlotLine_S16PtrS16Ptr
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_S8PtrInt
+    (AA{<:UInt32}, AA{<:UInt32}) => ImPlot_PlotLine_U32PtrU32Ptr
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_doublePtrInt
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_S32PtrInt
+    (AA{<:Int8}, AA{<:Int8}) => ImPlot_PlotLine_S8PtrS8Ptr
+    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_U64PtrInt       
+]
+for ((T1, T2), func) in line_functions
+    @eval ImPlot_PlotLine(label_id, xs::$T1, ys::$T2, count, offset, stride) = $func(label_id, xs, ys, count, offset, stride)
+end
+
+
+line_functions_nox = [
+    UInt16 => ImPlot_PlotLine_U16PtrInt
+    Cfloat => ImPlot_PlotLine_FloatPtrInt
+    Int64 => ImPlot_PlotLine_S64PtrInt
+    UInt8 => ImPlot_PlotLine_U8PtrInt
+    Int16 => ImPlot_PlotLine_S16PtrInt
+    UInt32 => ImPlot_PlotLine_U32PtrInt
+    Int8 => ImPlot_PlotLine_S8PtrInt
+    Cdouble => ImPlot_PlotLine_doublePtrInt
+    Int32 => ImPlot_PlotLine_S32PtrInt
+    UInt64 => ImPlot_PlotLine_U64PtrInt
+]
+for (T1, func) in line_functions_nox
+    @eval ImPlot_PlotLine(label_id, values::AbstractArray{<:$T1}, count, xscale=1.0, x0=0, offset=0, stride=$(sizeof(T1))) = $func(label_id, values, count, xscale, x0, offset, stride)
+end
+

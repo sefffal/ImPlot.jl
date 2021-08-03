@@ -1,11 +1,11 @@
 # Utils for modifying plot style variables
 
 function PushStyleColor(idx, col::UInt32)
-    ImPlot_PushStyleColorU32(idx, col)
+    ImPlot_PushStyleColor_U32(idx, col)
 end
 
 function PushStyleColor(idx, col::ImVec4)
-    ImPlot_PushStyleColorVec4(idx, col)
+    ImPlot_PushStyleColor_Vec4(idx, col)
 end
 
 function PushStyleVar(idx, val::AbstractFloat)
