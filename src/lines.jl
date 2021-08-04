@@ -1,39 +1,39 @@
 # Line plots
 
-function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, y::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
+function PlotLine(label_id::String, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, y::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
     ImPlot_PlotLine(label_id, x, y, count, offset, stride)
 end
 
-function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, y::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
+function PlotLine(label_id::String, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, y::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
     ImPlot_PlotLine(label_id, Float64.(x), Float64.(y), count, offset, stride)
 end
 
-function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
+function PlotLine(label_id::String, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0, stride::Integer = sizeof(T)) where {T<:ImPlotData}
     ImPlot_PlotLine(label_id, x, count, xscale, x0, offset, stride)
 end
 
-function PlotLine(label_id, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
+function PlotLine(label_id::String, x::Union{AbstractArray{T},Ref{T},Ptr{T}}, count::Integer=length(x), xscale::Real = 1.0, x0::Real = 0.0, offset::Integer = 0, stride::Integer = sizeof(Float64)) where {T<:Real}
     ImPlot_PlotLine(label_id, Float64.(x), count, xscale, x0, offset, stride)
 end
 
-function PlotLine(x::AbstractArray{T}, y::AbstractArray{T};
+function PlotLine(label_id::String, x::AbstractArray{T}, y::AbstractArray{T};
                   count::Integer = min(length(x), length(y)), offset::Integer = 0,
-                  stride::Integer = 1, label_id::String = "") where {T<:ImPlotData}
+                  stride::Integer = 1) where {T<:ImPlotData}
     ImPlot_PlotLine(label_id, x, y, count, offset, stride * sizeof(T))
 end
 
-function PlotLine(x::AbstractArray{T1}, y::AbstractArray{T2}; kwargs...) where {T1<:Real, T2<:Real}
-    PlotLine(promote(x,y)...; kwargs...)
+function PlotLine(label_id::String, x::AbstractArray{T1}, y::AbstractArray{T2}; kwargs...) where {T1<:Real, T2<:Real}
+    PlotLine(label_id, promote(x,y)...; kwargs...)
 end
 
-function PlotLine(y::AbstractArray{T}; label_id::String="", count::Integer=length(y),
+function PlotLine(label_id::String, y::AbstractArray{T}; count::Integer=length(y),
                   xscale::Real = 1.0, x0::Real = 0.0, offset::Integer=0,
                   stride::Integer=1) where {T<:ImPlotData}
     ImPlot_PlotLine(label_id, y, count, xscale, x0, offset, stride * sizeof(T))
 end
 
-function PlotLine(x::UnitRange{<:Integer}, y::AbstractArray{T}; xscale::Real = 1.0,
-                  x0::Real = 0.0, label_id::String="") where {T<:ImPlotData}
+function PlotLine(label_id::String, x::UnitRange{<:Integer}, y::AbstractArray{T}; xscale::Real = 1.0,
+                  x0::Real = 0.0) where {T<:ImPlotData}
 
     count::Cint = length(x) <= length(y) ? length(x) : throw("Range out of bounds")
     offset::Cint = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
@@ -41,8 +41,7 @@ function PlotLine(x::UnitRange{<:Integer}, y::AbstractArray{T}; xscale::Real = 1
     ImPlot_PlotLine(label_id, y, count,  xscale, x0, offset, stride)
 end
 
-function PlotLine(x::StepRange, y::AbstractArray{T}; xscale::Real = 1.0, x0::Real = 0.0,
-                  label_id::String= "") where {T<:ImPlotData}
+function PlotLine(label_id::String, x::StepRange, y::AbstractArray{T}; xscale::Real = 1.0, x0::Real = 0.0) where {T<:ImPlotData}
 
     x.stop < 1 && throw("Range out of bounds")
     count::Cint = length(x) <= length(y) ? length(x) : throw("Range out of bounds")
@@ -51,14 +50,15 @@ function PlotLine(x::StepRange, y::AbstractArray{T}; xscale::Real = 1.0, x0::Rea
     ImPlot_PlotLine(label_id, y, count, xscale, x0, offset, stride)
 end
 
-PlotLine(x::UnitRange{<:Integer}, y::AbstractArray{<:Real}; kwargs...) = PlotLine(x, Float64.(y); kwargs...)
-PlotLine(x::StepRange, y::AbstractArray{<:Real}; kwargs...) = PlotLine(x, Float64.(y); kwargs...)
+PlotLine(label_id::String, x::UnitRange{<:Integer}, y::AbstractArray{<:Real}; kwargs...) = PlotLine(label_id, x, Float64.(y); kwargs...)
+PlotLine(label_id::String, x::StepRange, y::AbstractArray{<:Real}; kwargs...) = PlotLine(label_id, x, Float64.(y); kwargs...)
 
 # xfield, yfield should be propertynames of eltype(structvec)
 function PlotLine(
+    label_id::String,
     structvec::Vector{T}, xfield::Symbol, yfield::Symbol; 
     count::Integer = length(structvec), offset::Integer = 0,
-    stride::Integer = 1, label_id::String = ""
+    stride::Integer = 1
 ) where T
     
     Tx = fieldtype(T, xfield)
@@ -89,35 +89,24 @@ function PlotLine(
     ImPlot_PlotLine(label_id, x, y, count, offset, stride)
 end
 
-PlotLineG(label_id, getter, data, count, offset = 0) =
+PlotLineG(label_id::String, getter, data, count, offset = 0) =
 ImPlot_PlotLineG(label_id, getter, data, count, offset)
 
 
-AA = AbstractArray
 line_functions = [
-    (AA{<:Cfloat}, AA{<:Cfloat}) => ImPlot_PlotLine_FloatPtrFloatPtr
-    (AA{<:Cdouble}, AA{<:Cdouble}) => ImPlot_PlotLine_doublePtrdoublePtr
-    (AA{<:Int32}, AA{<:Int32}) => ImPlot_PlotLine_S32PtrS32Ptr
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_U16PtrInt
-    (AA{<:UInt64}, AA{<:UInt64}) => ImPlot_PlotLine_U64PtrU64Ptr
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_FloatPtrInt
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_S64PtrInt
-    (AA{<:UInt16}, AA{<:UInt16}) => ImPlot_PlotLine_U16PtrU16Ptr
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_U8PtrInt
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_S16PtrInt
-    (AA{<:Int64}, AA{<:Int64}) => ImPlot_PlotLine_S64PtrS64Ptr
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_U32PtrInt
-    (AA{<:UInt8}, AA{<:UInt8}) => ImPlot_PlotLine_U8PtrU8Ptr
-    (AA{<:Int16}, AA{<:Int16}) => ImPlot_PlotLine_S16PtrS16Ptr
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_S8PtrInt
-    (AA{<:UInt32}, AA{<:UInt32}) => ImPlot_PlotLine_U32PtrU32Ptr
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_doublePtrInt
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_S32PtrInt
-    (AA{<:Int8}, AA{<:Int8}) => ImPlot_PlotLine_S8PtrS8Ptr
-    # (AA{<:}, AA{<:}) => ImPlot_PlotLine_U64PtrInt       
+    (Cfloat, Cfloat) => ImPlot_PlotLine_FloatPtrFloatPtr
+    (Cdouble, Cdouble) => ImPlot_PlotLine_doublePtrdoublePtr
+    (Int32, Int32) => ImPlot_PlotLine_S32PtrS32Ptr
+    (UInt64, UInt64) => ImPlot_PlotLine_U64PtrU64Ptr
+    (UInt16, UInt16) => ImPlot_PlotLine_U16PtrU16Ptr
+    (Int64, Int64) => ImPlot_PlotLine_S64PtrS64Ptr
+    (UInt8, UInt8) => ImPlot_PlotLine_U8PtrU8Ptr
+    (Int16, Int16) => ImPlot_PlotLine_S16PtrS16Ptr
+    (UInt32, UInt32) => ImPlot_PlotLine_U32PtrU32Ptr
+    (Int8, Int8) => ImPlot_PlotLine_S8PtrS8Ptr
 ]
 for ((T1, T2), func) in line_functions
-    @eval ImPlot_PlotLine(label_id, xs::$T1, ys::$T2, count, offset, stride) = $func(label_id, xs, ys, count, offset, stride)
+    @eval ImPlot_PlotLine(label_id::String, xs::AbstractArray{<:$T1}, ys::AbstractArray{<:$T2}, count, offset, stride) = $func(label_id, xs, ys, count, offset, stride)
 end
 
 
@@ -134,6 +123,6 @@ line_functions_nox = [
     UInt64 => ImPlot_PlotLine_U64PtrInt
 ]
 for (T1, func) in line_functions_nox
-    @eval ImPlot_PlotLine(label_id, values::AbstractArray{<:$T1}, count, xscale=1.0, x0=0, offset=0, stride=$(sizeof(T1))) = $func(label_id, values, count, xscale, x0, offset, stride)
+    @eval ImPlot_PlotLine(label_id::String, values::AbstractArray{<:$T1}, count, xscale=1.0, x0=0, offset=0, stride=$(sizeof(T1))) = $func(label_id, values, count, xscale, x0, offset, stride)
 end
 
