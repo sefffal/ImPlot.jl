@@ -24,27 +24,26 @@ function PlotScatter(label_id, x::Union{AbstractArray{T},Ptr{T},Ref{T}},
     ImPlot_PlotScatter(label_id, Float64.(x), Float64.(y), count, offset, stride)
 end
 
-function PlotScatter(x::AbstractArray{T}, y::AbstractArray{T};
+function PlotScatter(label_id::String, x::AbstractArray{T}, y::AbstractArray{T};
                   count::Integer = min(length(x), length(y)),
-                  offset::Integer = 0, stride::Integer = 1,
-                  label_id::String = "") where {T<:ImPlotData}
+                  offset::Integer = 0, stride::Integer = 1) where {T<:ImPlotData}
     
     ImPlot_PlotScatter(label_id, x, y, count, offset, stride * sizeof(T))
 end
 
-function PlotScatter(x::AbstractArray{T1}, y::AbstractArray{T2}; kwargs...) where {T1<:Real,T2<:Real}
-    PlotScatter(promote(x,y)...; kwargs...)
+function PlotScatter(label_id::String, x::AbstractArray{T1}, y::AbstractArray{T2}; kwargs...) where {T1<:Real,T2<:Real}
+    PlotScatter(label_id::String, promote(x,y)...; kwargs...)
 end
 
-function PlotScatter(y::AbstractArray{T}; label_id::String="", count::Integer=length(y),
+function PlotScatter(label_id::String, y::AbstractArray{T};count::Integer=length(y),
                   xscale::Real = 1.0, x0::Real = 0,
                   offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
     ImPlot_PlotScatter(label_id, y, count, xscale, x0, offset, stride * sizeof(T))
 end
 
-function PlotScatter(x::UnitRange{<:Integer}, y::AbstractArray{T};
+function PlotScatter(label_id::String, x::UnitRange{<:Integer}, y::AbstractArray{T};
                   xscale::Real = 1.0, x0::Real = 0,
-                  label_id::String="") where {T<:ImPlotData}
+                  ) where {T<:ImPlotData}
 
     count::Cint = length(x)
     offset::Cint = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
@@ -52,9 +51,9 @@ function PlotScatter(x::UnitRange{<:Integer}, y::AbstractArray{T};
     ImPlot_PlotScatter(label_id, y, count, xscale, x0, offset, stride)
 end
 
-function PlotScatter(x::StepRange, y::AbstractArray{T};
+function PlotScatter(label_id::String, x::StepRange, y::AbstractArray{T};
                      xscale::Real = 1.0, x0::Real = 0,
-                     label_id::String="") where {T<:ImPlotData}
+                     ) where {T<:ImPlotData}
     
     x.stop < 1 && throw("Range out of bounds")
     count::Cint = length(x)
@@ -65,9 +64,10 @@ end
 
 # xfield, yfield should be propertynames of eltype(structvec)
 function PlotScatter(
+    label_id::String,
     structvec::Vector{T}, xfield::Symbol, yfield::Symbol; 
     count::Integer = length(structvec), offset::Integer = 0,
-    stride::Integer = 1, label_id::String = ""
+    stride::Integer = 1
 ) where T
     
     Tx = fieldtype(T, xfield)
@@ -101,3 +101,48 @@ end
 
 PlotScatterG(label_id, getter, data, count, offset=0) =
 ImPlot_PlotScatterG(label_id, getter, data, count, offset)
+
+
+line_functions = [
+    (Cfloat, Cfloat) => ImPlot_PlotScatter_FloatPtrFloatPtr
+    (Cdouble, Cdouble) => ImPlot_PlotScatter_doublePtrdoublePtr
+    (Int32, Int32) => ImPlot_PlotScatter_S32PtrS32Ptr
+    (UInt64, UInt64) => ImPlot_PlotScatter_U64PtrU64Ptr
+    (UInt16, UInt16) => ImPlot_PlotScatter_U16PtrU16Ptr
+    (Int64, Int64) => ImPlot_PlotScatter_S64PtrS64Ptr
+    (UInt8, UInt8) => ImPlot_PlotScatter_U8PtrU8Ptr
+    (Int16, Int16) => ImPlot_PlotScatter_S16PtrS16Ptr
+    (UInt32, UInt32) => ImPlot_PlotScatter_U32PtrU32Ptr
+    (Int8, Int8) => ImPlot_PlotScatter_S8PtrS8Ptr
+]
+for ((T1, T2), func) in line_functions
+    @eval ImPlot_PlotScatter(label_id::String, xs::AbstractArray{<:$T1}, ys::AbstractArray{<:$T2}, count, offset, stride) = $func(label_id, xs, ys, count, offset, stride)
+end
+
+
+line_functions_nox = [
+    UInt16 => ImPlot_PlotScatter_U16PtrInt
+    Cfloat => ImPlot_PlotScatter_FloatPtrInt
+    Int64 => ImPlot_PlotScatter_S64PtrInt
+    UInt8 => ImPlot_PlotScatter_U8PtrInt
+    Int16 => ImPlot_PlotScatter_S16PtrInt
+    UInt32 => ImPlot_PlotScatter_U32PtrInt
+    Int8 => ImPlot_PlotScatter_S8PtrInt
+    Cdouble => ImPlot_PlotScatter_doublePtrInt
+    Int32 => ImPlot_PlotScatter_S32PtrInt
+    UInt64 => ImPlot_PlotScatter_U64PtrInt
+]
+for (T1, func) in line_functions_nox
+    @eval ImPlot_PlotScatter(label_id::String, values::AbstractArray{<:$T1}, count, xscale=1.0, x0=0, offset=0, stride=$(sizeof(T1))) = $func(label_id, values, count, xscale, x0, offset, stride)
+end
+
+
+
+
+# ImPlot_PlotScatterG                   ImPlot_PlotScatter_S64PtrInt           ImPlot_PlotScatter_U32PtrU32Ptr
+# ImPlot_PlotScatter_FloatPtrFloatPtr   ImPlot_PlotScatter_S64PtrS64Ptr        ImPlot_PlotScatter_U64PtrInt
+# ImPlot_PlotScatter_FloatPtrInt        ImPlot_PlotScatter_S8PtrInt            ImPlot_PlotScatter_U64PtrU64Ptr
+# ImPlot_PlotScatter_S16PtrInt          ImPlot_PlotScatter_S8PtrS8Ptr          ImPlot_PlotScatter_U8PtrInt
+# ImPlot_PlotScatter_S16PtrS16Ptr       ImPlot_PlotScatter_U16PtrInt           ImPlot_PlotScatter_U8PtrU8Ptr
+# ImPlot_PlotScatter_S32PtrInt          ImPlot_PlotScatter_U16PtrU16Ptr        ImPlot_PlotScatter_doublePtrInt
+# ImPlot_PlotScatter_S32PtrS32Ptr       ImPlot_PlotScatter_U32PtrInt           ImPlot_PlotScatter_doublePtrdoublePtr
